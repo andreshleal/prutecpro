@@ -9,6 +9,13 @@ import java.util.Date;
 @Table(name = "pcs")
 public class Pc {
 
+    public Pc() {
+    }
+
+    public Pc(String nombre) {
+        this.nombre = nombre;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

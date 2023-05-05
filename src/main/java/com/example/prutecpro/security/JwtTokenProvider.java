@@ -46,23 +46,23 @@ public class JwtTokenProvider {
 
         }catch (SignatureException ex){
             System.out.println("token firma no valida");
-            //throw new ValidarTokenException(HttpStatus.BAD_REQUEST,"firma no valida");
+
             return false;
         }catch (MalformedJwtException ex){
             System.out.println("token no valida");
-            //throw new ValidarTokenException(HttpStatus.BAD_REQUEST,"no valido");
+
             return false;
         }catch (ExpiredJwtException ex){
             System.out.println("token caducado");
-            //throw new ValidarTokenException(HttpStatus.BAD_REQUEST,"caducado");
+
             return false;
         }catch (UnsupportedJwtException ex){
             System.out.println("token no compatible");
-            //throw new ValidarTokenException(HttpStatus.BAD_REQUEST,"no compatible");
+
             return false;
         }catch (IllegalArgumentException ex){
             System.out.println("la cadena claims esta vacia");
-            //throw new ValidarTokenException(HttpStatus.BAD_REQUEST,"la cadena claims esta vacia");
+
             return false;
         }
     }

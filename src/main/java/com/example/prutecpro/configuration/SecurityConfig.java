@@ -67,6 +67,10 @@ public class SecurityConfig {
                 .authorizeRequests()
 
                 .antMatchers(HttpMethod.GET, "/pc/**").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/auth/correo/**").permitAll()
+
+
+                .antMatchers(HttpMethod.GET,"/encuesta").hasAnyRole(USER,ADMIN)
                 .antMatchers(HttpMethod.POST,"/encuesta").hasAnyRole(USER,ADMIN)
 //                .antMatchers(HttpMethod.PUT,"/encuesta/*").hasRole(ADMIN)
                 .antMatchers(HttpMethod.DELETE,"/encuesta/*").hasAnyRole(USER,ADMIN)

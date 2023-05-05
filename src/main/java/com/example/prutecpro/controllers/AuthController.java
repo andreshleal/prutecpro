@@ -46,4 +46,9 @@ public class AuthController {
         return new ResponseEntity<>(usuarioService.getUsuarios(), HttpStatus.OK);
     }
 
+    @GetMapping("/correo")
+    public  ResponseEntity<UsuarioDto> buscarCorreo(@RequestParam("correo") String correo){
+        return ResponseEntity.ok(usuarioService.buscarPorCorreo(correo));
+    }
+
 }

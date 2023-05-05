@@ -18,4 +18,6 @@ public interface UsuarioService {
 
     List<UsuarioDto> getUsuarios();
 
+    UsuarioDto buscarPorCorreo(String correo);
+
 }

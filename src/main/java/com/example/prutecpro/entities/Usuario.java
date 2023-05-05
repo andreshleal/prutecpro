@@ -44,6 +44,10 @@ public class Usuario {
     @Column(nullable = false)
     private String password;
 
+    private boolean estado = false;
+
+    private int intentos = 0;
+
     @Column(updatable = false)
     @CreationTimestamp
     private Date createAt;
@@ -127,5 +131,21 @@ public class Usuario {
 
     public void setRoles(Set<Rol> roles) {
         this.roles = roles;
+    }
+
+    public boolean isEstado() {
+        return estado;
+    }
+
+    public void setEstado(boolean estado) {
+        this.estado = estado;
+    }
+
+    public int getIntentos() {
+        return intentos;
+    }
+
+    public void setIntentos(int intentos) {
+        this.intentos = intentos;
     }
 }

@@ -38,16 +38,6 @@ public class UsuarioServiceImpl implements UsuarioService {
     public String createUsuario(UsuarioDto usuarioDto) throws IOException {
 
 
-//        if (usuarioRepository.existsUsuarioByNombreUsuario(usuarioDto.getNombreUsuario()).get()){
-//            throw new IntegrationViolationName("Usuario","nombre de usuario",
-//                    usuarioDto.getNombreUsuario());
-//        }
-
-//        if (usuarioRepository.existsUsuarioByEmail(usuarioDto.getEmail()).get()){
-//            throw new IntegrationViolationName("Usuario","email"
-//                    , usuarioDto.getEmail());
-//        }
-
         usuarioDto.setPassword(passwordEncoder.encode(usuarioDto.getPassword()));
         usuarioDto.setRoles(Collections.singleton(rolRepository.findRolByNombre("ROLE_USER").get()));
         usuarioRepository.save(toEntity(usuarioDto));
@@ -58,19 +48,47 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public JwtAuthResponseDto autenticarUsuario(LoginDto loginDto) {
 
-//        if (!usuarioRepository.findUsuarioByNombreUsuarioOrEmail(loginDto.getNombreUsuarioOrEmail(),
-//                loginDto.getNombreUsuarioOrEmail()).isPresent())
-//        {
-//            throw new ResourceNotFoundException("Usuario","usuario o email",loginDto.getNombreUsuarioOrEmail());
-//        }
+        Usuario validarUuario = usuarioRepository.findUsuarioByNombreUsuarioOrEmail(
+                loginDto.getNombreUsuarioOrEmail(),
+                loginDto.getNombreUsuarioOrEmail()
+        ).get();
+
+        if(validarUuario.isEstado()){
+            return new JwtAuthResponseDto(null, "usuaio bloqueado");
+        }
 
 
+
+        String token = null;
+        try {
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(loginDto.getNombreUsuarioOrEmail(),
                         loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        String token = jwtTokenProvider.generarToken(authentication);
+            Usuario usuario = usuarioRepository.findUsuarioByNombreUsuarioOrEmail(
+                    loginDto.getNombreUsuarioOrEmail(),
+                    loginDto.getNombreUsuarioOrEmail()
+            ).get();
+            usuario.setIntentos(0);
+            usuarioRepository.save(usuario);
+
+        token = jwtTokenProvider.generarToken(authentication);
+
+        }catch (Exception e){
+            System.out.println("error al auteticar");
+            Usuario usuario = usuarioRepository.findUsuarioByNombreUsuarioOrEmail(
+                    loginDto.getNombreUsuarioOrEmail(),
+                    loginDto.getNombreUsuarioOrEmail()
+                    ).get();
+            usuario.setIntentos(usuario.getIntentos() + 1);
+            if(usuario.getIntentos() >= 3){
+                usuario.setEstado(true);
+            }
+            usuarioRepository.save(usuario);
+        }
+
+
 
         return new JwtAuthResponseDto(token, "Bearer");
     }
@@ -86,6 +104,11 @@ public class UsuarioServiceImpl implements UsuarioService {
     public List<UsuarioDto> getUsuarios() {
         return usuarioRepository.findAll().stream()
                 .map(user -> toDto(user)).collect(Collectors.toList());
+    }
+
+    @Override
+    public UsuarioDto buscarPorCorreo(String correo) {
+        return toDto(usuarioRepository.findUsuarioByEmail(correo).get());
     }
 
 
